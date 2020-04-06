@@ -54,7 +54,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        for i in range(len(self.storage)):
+            if self.storage[i] is None and i == index:
+                self.storage[i] = [key, value]
+            elif i == index:
+                print('Warning: Index is already occupied')
+                return None
 
 
 
@@ -66,7 +73,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        if self.storage[index] is None:
+            print('Warning: index is empty')
+            return None
+        else:
+            self.storage[index] = None
 
 
     def retrieve(self, key):
@@ -77,7 +90,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        if self.storage[index] is not None:
+            return self.storage[index]
+        else:
+            print('Index is empty')
+            return None
 
 
     def resize(self):
@@ -87,7 +106,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+
+        new_storage = [None] * self.capacity
+
+        
+
+
 
 
 
