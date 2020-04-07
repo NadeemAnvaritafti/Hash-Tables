@@ -54,15 +54,47 @@ class HashTable:
 
         Fill this in.
         '''
+
         index = self._hash_mod(key)
+        current = self.storage[index]  # Pair at current index
+        pair = None  # Pair to insert
 
-        for i in range(len(self.storage)):
-            if self.storage[i] is None and i == index:
-                self.storage[i] = [key, value]
-            elif i == index:
-                print('Warning: Index is already occupied')
-                return None
+        # Check if current location is empty
+        # Handle collisions by adding new LinkedPair
+        while current and current.key != key:
+            pair = current
+            current = pair.next
+        # If a node is found with same key
+        if current:
+            current.value = value
+        # If a node is not found
+        else:
+            new = LinkedPair(key, value)
+            new.next = self.storage[index]
+            self.storage[index] = new
 
+        # [{'hello': 'world'}, {'jump': 'rope'}, None]
+
+        ### scenario 1
+        # 'hi', 'john'
+        # index = 0
+        # current = (hello, world)
+        # pair = (hello, world)
+        # current = None
+
+        ### scenario 2
+        # hello, john
+        # index = 0
+        # current = hello, world
+        # key's match
+        # current.value = john
+
+        ### scenario 3
+        # hi, john
+        # index = 2
+        # new.next = None
+        # new = hi, john
+        
 
 
     def remove(self, key):
@@ -74,12 +106,23 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
+        current = self.storage[index]
+        pair = None
 
+        while current and current.key != key:
+            pair = current
+            current = pair.next
+        # If key isn't in our storage
         if self.storage[index] is None:
-            print('Warning: index is empty')
-            return None
+            print("Key not found")
+        # If key is in our storage
         else:
-            self.storage[index] = None
+            # Remove the first element in the linked list
+            # then basically making the head what was previously the next node
+            if pair is None:
+                self.storage[index] = current.next
+            else:
+                pair.next = current.next
 
 
     def retrieve(self, key):
@@ -91,12 +134,17 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
+        current = self.storage[index]
 
-        if self.storage[index] is not None:
-            return self.storage[index]
-        else:
-            print('Index is empty')
-            return None
+        # keep looping through nodes until you find the key
+        # else return None
+
+        while current:
+            if current.key == key:
+                return current.value
+            else:
+                current = current.next
+        return None
 
 
     def resize(self):
@@ -106,9 +154,17 @@ class HashTable:
 
         Fill this in.
         '''
+        old_storage = self.storage
         self.capacity *= 2
+        self.storage = [None] * self.capacity
 
-        new_storage = [None] * self.capacity
+        # loop through old storage, including nodes and add them to new storage
+
+        for i in old_storage:
+            current = i
+            while current:
+                self.insert(current.key, current.value)
+                current = current.next
 
         
 
